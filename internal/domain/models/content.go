@@ -6,8 +6,8 @@ type Content struct {
 	ID          string
 	OwnerID     string
 	Type        ContentType
-	Title       string
-	Description string
+	Title       *string
+	Description *string
 	Visibility  ContentVisibility
 	Status      ContentStatus
 	CreatedAt   time.Time

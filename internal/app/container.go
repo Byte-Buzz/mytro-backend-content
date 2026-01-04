@@ -1,6 +1,7 @@
 package app
 
 import (
+	"mytro-backend-content/internal/app/repository"
 	"mytro-backend-content/internal/infrastructure/config"
 
 	"go.uber.org/zap"
@@ -20,6 +21,8 @@ type AppServices struct {
 }
 
 type AppRepositories struct {
+	ContentRepository repository.ContentRepository
+	FileRepository    repository.FileRepository
 }
 
 func NewApp(config *config.Config, db *gorm.DB, logger *zap.Logger) *App {
@@ -39,6 +42,8 @@ func NewApp(config *config.Config, db *gorm.DB, logger *zap.Logger) *App {
 }
 
 func (app *App) createRepositories() {
+	app.repositories.ContentRepository = repository.NewContentRepository(app.Logger, app.DB)
+	app.repositories.FileRepository = repository.NewFileRepository()
 }
 
 func (app *App) createServices() {
