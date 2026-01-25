@@ -1,8 +1,10 @@
 package models
 
+import "github.com/google/uuid"
+
 type ContentFile struct {
-	ContentID string
-	FileID    string
+	ContentID uuid.UUID
+	FileID    uuid.UUID
 	Role      FileRole
 	Width     *int
 	Height    *int

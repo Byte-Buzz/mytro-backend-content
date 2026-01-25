@@ -3,6 +3,8 @@ package repository
 import (
 	"mytro-backend-content/internal/domain/models"
 	"mytro-backend-content/internal/infrastructure/database/dto"
+
+	"github.com/google/uuid"
 )
 
 func metadataToDomain(dto *dto.ContentMetadataDTO) *models.ContentMetadata {
@@ -10,8 +12,13 @@ func metadataToDomain(dto *dto.ContentMetadataDTO) *models.ContentMetadata {
 		return nil
 	}
 
+	contentID, err := uuid.Parse(dto.ContentID)
+	if err != nil {
+		return nil
+	}
+
 	return &models.ContentMetadata{
-		ContentID:       dto.ContentID,
+		ContentID:       contentID,
 		DurationSeconds: dto.DurationSeconds,
 		DominantColor:   dto.DominantColor,
 	}
@@ -23,7 +30,7 @@ func metadataToDTO(m *models.ContentMetadata) *dto.ContentMetadataDTO {
 	}
 
 	return &dto.ContentMetadataDTO{
-		ContentID:       m.ContentID,
+		ContentID:       m.ContentID.String(),
 		DurationSeconds: m.DurationSeconds,
 		DominantColor:   m.DominantColor,
 	}

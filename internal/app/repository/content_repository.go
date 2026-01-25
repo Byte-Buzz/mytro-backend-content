@@ -52,21 +52,31 @@ func (r *contentRepository) FindByID(ctx context.Context, id uuid.UUID) (*models
 		return nil, err
 	}
 
-	return contentToDomain(&content), nil
+	return contentToDomain(&content)
 }
 
 func (r *contentRepository) Create(ctx context.Context, content *models.Content) error {
 	return r.db.WithContext(ctx).Create(contentToDTO(content)).Error
 }
 
-func contentToDomain(dto *dto.ContentDTO) *models.Content {
+func contentToDomain(dto *dto.ContentDTO) (*models.Content, error) {
 	if dto == nil {
-		return nil
+		return nil, nil
+	}
+
+	id, err := uuid.Parse(dto.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	ownerID, err := uuid.Parse(dto.OwnerID)
+	if err != nil {
+		return nil, err
 	}
 
 	return &models.Content{
-		ID:          dto.ID,
-		OwnerID:     dto.OwnerID,
+		ID:          id,
+		OwnerID:     ownerID,
 		Type:        models.ContentType(dto.Type),
 		Title:       dto.Title,
 		Description: dto.Description,
@@ -78,7 +88,7 @@ func contentToDomain(dto *dto.ContentDTO) *models.Content {
 		DeletedAt:   dto.DeletedAt,
 		Metadata:    metadataToDomain(dto.Metadata),
 		Files:       filesToDomain(dto.Files),
-	}
+	}, nil
 }
 
 func contentToDTO(c *models.Content) *dto.ContentDTO {
@@ -87,8 +97,8 @@ func contentToDTO(c *models.Content) *dto.ContentDTO {
 	}
 
 	return &dto.ContentDTO{
-		ID:          c.ID,
-		OwnerID:     c.OwnerID,
+		ID:          c.ID.String(),
+		OwnerID:     c.OwnerID.String(),
 		Type:        string(c.Type),
 		Title:       c.Title,
 		Description: c.Description,

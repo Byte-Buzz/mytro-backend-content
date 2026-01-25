@@ -9,19 +9,32 @@ import (
 )
 
 type ContentService struct {
-	ContentRepository repository.ContentRepository
+	contentRepository repository.ContentRepository
+	fileRepository    repository.FileRepository
 }
 
-func NewContentService(contentRepository repository.ContentRepository) ContentService {
+func NewContentService(contentRepository repository.ContentRepository, fileRepository repository.FileRepository) ContentService {
 	return ContentService{
-		ContentRepository: contentRepository,
+		contentRepository: contentRepository,
+		fileRepository:    fileRepository,
 	}
 }
 
-func (s ContentService) FindByID(ctx context.Context, id uuid.UUID) (*models.Content, error) {
-	return s.ContentRepository.FindByID(ctx, id)
+func (s ContentService) CreateUpload(ctx context.Context) (*models.UploadURL, error) {
+	content := models.Content{
+		ID: uuid.New(),
+	}
+
+	return s.fileRepository.CreateUploadURL(ctx, models.UploadURLData{
+		ContentID:   content.ID,
+		Filename:    content.ID.String(),
+		MaxSize:     20 * 1024 * 1024,
+		IsVideo:     false,
+		ContentType: "image/jpeg",
+		Visibility:  models.ContentVisibilityPublic,
+	})
 }
 
-func (s ContentService) Create(ctx context.Context, content *models.Content) error {
-	return s.ContentRepository.Create(ctx, content)
+func (s ContentService) GetContentStatus(ctx context.Context, id uuid.UUID) (*models.Content, error) {
+	return s.contentRepository.FindByID(ctx, id)
 }

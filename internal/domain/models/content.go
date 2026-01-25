@@ -1,10 +1,14 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type Content struct {
-	ID          string
-	OwnerID     string
+	ID          uuid.UUID
+	OwnerID     uuid.UUID
 	Type        ContentType
 	Title       *string
 	Description *string

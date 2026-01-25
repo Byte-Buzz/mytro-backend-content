@@ -1,7 +1,9 @@
 package models
 
+import "github.com/google/uuid"
+
 type ContentMetadata struct {
-	ContentID       string
+	ContentID       uuid.UUID
 	DurationSeconds *int
 	DominantColor   *string
 }

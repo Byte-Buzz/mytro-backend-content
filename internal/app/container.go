@@ -2,7 +2,9 @@ package app
 
 import (
 	"mytro-backend-content/internal/app/repository"
+	"mytro-backend-content/internal/app/service"
 	"mytro-backend-content/internal/infrastructure/config"
+	"mytro-backend-content/internal/infrastructure/grpc/pb"
 
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -11,13 +13,17 @@ import (
 type App struct {
 	Config *config.Config
 	Logger *zap.Logger
+	GRPC   *pb.ContentStorageClient
 	DB     *gorm.DB
 
+	// TODO: implement transaction manager
+	// TxManager    *repository.TxManager
 	Services     *AppServices
 	repositories *AppRepositories
 }
 
 type AppServices struct {
+	ContentService service.ContentService
 }
 
 type AppRepositories struct {
@@ -25,12 +31,14 @@ type AppRepositories struct {
 	FileRepository    repository.FileRepository
 }
 
-func NewApp(config *config.Config, db *gorm.DB, logger *zap.Logger) *App {
+func NewApp(config *config.Config, db *gorm.DB, logger *zap.Logger, grpcClient *pb.ContentStorageClient) *App {
 	app := &App{
 		Config: config,
 		Logger: logger,
+		GRPC:   grpcClient,
 		DB:     db,
 
+		// TxManager:    repository.NewTxManager(db),
 		Services:     &AppServices{},
 		repositories: &AppRepositories{},
 	}
@@ -43,8 +51,9 @@ func NewApp(config *config.Config, db *gorm.DB, logger *zap.Logger) *App {
 
 func (app *App) createRepositories() {
 	app.repositories.ContentRepository = repository.NewContentRepository(app.Logger, app.DB)
-	app.repositories.FileRepository = repository.NewFileRepository()
+	app.repositories.FileRepository = repository.NewFileRepository(*app.GRPC)
 }
 
 func (app *App) createServices() {
+	app.Services.ContentService = service.NewContentService(app.repositories.ContentRepository, app.repositories.FileRepository)
 }

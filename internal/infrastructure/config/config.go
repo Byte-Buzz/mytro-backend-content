@@ -5,6 +5,7 @@ type Config struct {
 	Database DatabaseConfig
 	Logging  LoggingConfig
 	CORS     CORSConfig
+	GRPC     GRPCConfig
 	Keys     KeysConfig
 }
 
@@ -35,6 +36,11 @@ func LoadFromEnv() (*Config, error) {
 
 	cfg.CORS.LoadFromEnv()
 	if err := cfg.CORS.Validate(); err != nil {
+		return nil, err
+	}
+
+	cfg.GRPC.LoadFromEnv()
+	if err := cfg.GRPC.Validate(); err != nil {
 		return nil, err
 	}
 
