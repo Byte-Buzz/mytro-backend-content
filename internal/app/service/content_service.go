@@ -35,6 +35,17 @@ func (s ContentService) CreateUpload(ctx context.Context) (*models.UploadURL, er
 	})
 }
 
+func (s ContentService) CheckContentOwner(ctx context.Context, contentId uuid.UUID, ownerID uuid.UUID) (bool, error) {
+	owner, err := s.contentRepository.GetOwnerById(ctx, contentId)
+
+	return owner == ownerID, err
+}
+
+func (s ContentService) CompleteUpload(ctx context.Context, contentId uuid.UUID) error {
+	// TODO: Check if the file is already uploaded
+	return context.TODO().Err()
+}
+
 func (s ContentService) GetContentStatus(ctx context.Context, id uuid.UUID) (*models.Content, error) {
 	return s.contentRepository.FindByID(ctx, id)
 }

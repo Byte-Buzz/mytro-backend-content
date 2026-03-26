@@ -6,11 +6,18 @@ import (
 	v1 "mytro-backend-content/internal/transport/http/v1"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 func NewRouter(app *app.App) *gin.Engine {
 	// Create a new Gin router
 	router := gin.Default()
+
+	// Load public key for authentication
+	publicKey, err := app.GetPublicKey()
+	if err != nil {
+		app.Logger.Panic("parse public key error", zap.Error(err))
+	}
 
 	// Apply middlewares
 	router.Use(middleware.RequestID())
@@ -18,6 +25,7 @@ func NewRouter(app *app.App) *gin.Engine {
 	router.Use(middleware.CORS(app.Config.CORS))
 	router.Use(middleware.SecurityHeaders())
 	router.Use(gin.Recovery())
+	router.Use(middleware.Auth(publicKey, app.Logger))
 
 	// Register health check endpoint
 	registerHealth(router, app)

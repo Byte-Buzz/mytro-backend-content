@@ -4,13 +4,9 @@ import (
 	"errors"
 	"os"
 	"strings"
-	"time"
 )
 
 type KeysConfig struct {
-	PublicTokenLifetime  time.Duration
-	PrivateTokenLifetime time.Duration
-
 	publicKey string
 }
 
@@ -21,8 +17,6 @@ func (k *KeysConfig) PublicKey() string {
 }
 func (c *KeysConfig) LoadFromEnv() {
 	c.publicKey = getEnv("KEYS_PUBLIC_KEY_PATH", "")
-	c.PrivateTokenLifetime = getDurationEnv("TOKENS_REFRESH_TOKEN_LIFETIME", 30*24*time.Hour)
-	c.PublicTokenLifetime = getDurationEnv("TOKENS_ACCESS_TOKEN_LIFETIME", 15*time.Minute)
 }
 
 func (c *KeysConfig) Validate() error {

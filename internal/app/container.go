@@ -1,11 +1,15 @@
 package app
 
 import (
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
 	"mytro-backend-content/internal/app/repository"
 	"mytro-backend-content/internal/app/service"
 	"mytro-backend-content/internal/infrastructure/config"
 	"mytro-backend-content/internal/infrastructure/grpc/pb"
 
+	"github.com/bytedance/gopkg/util/logger"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -56,4 +60,19 @@ func (app *App) createRepositories() {
 
 func (app *App) createServices() {
 	app.Services.ContentService = service.NewContentService(app.repositories.ContentRepository, app.repositories.FileRepository)
+}
+
+func (app *App) GetPublicKey() (*rsa.PublicKey, error) {
+	publicKeyBlock, _ := pem.Decode(([]byte)(app.Config.Keys.PublicKey()))
+
+	if publicKeyBlock == nil {
+		app.Logger.Fatal("failed to parse PEM block containing the key")
+	}
+
+	publicKey, err := x509.ParsePKIXPublicKey(publicKeyBlock.Bytes)
+	if err != nil {
+		logger.Fatal("failed to parse public key: " + err.Error())
+	}
+
+	return publicKey.(*rsa.PublicKey), nil
 }

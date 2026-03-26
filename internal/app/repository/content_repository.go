@@ -12,6 +12,7 @@ import (
 
 type ContentRepository interface {
 	FindByID(ctx context.Context, id uuid.UUID) (*models.Content, error)
+	GetOwnerById(ctx context.Context, id uuid.UUID) (uuid.UUID, error)
 
 	Create(ctx context.Context, content *models.Content) error
 }
@@ -53,6 +54,22 @@ func (r *contentRepository) FindByID(ctx context.Context, id uuid.UUID) (*models
 	}
 
 	return contentToDomain(&content)
+}
+
+func (r *contentRepository) GetOwnerById(ctx context.Context, id uuid.UUID) (uuid.UUID, error) {
+	var contentDTO dto.ContentDTO
+
+	result := r.db.WithContext(ctx).Select("owner_id").Where("id = ?", id.String()).Take(contentDTO)
+
+	if result.Error == gorm.ErrRecordNotFound {
+		return uuid.Nil, nil
+	}
+
+	if result.Error != nil {
+		return uuid.Nil, result.Error
+	}
+
+	return uuid.Parse(contentDTO.OwnerID)
 }
 
 func (r *contentRepository) Create(ctx context.Context, content *models.Content) error {
