@@ -1,7 +1,7 @@
 -- ENUMs
 CREATE TYPE content_type AS ENUM ('image', 'video');
 CREATE TYPE content_visibility AS ENUM ('public', 'private', 'unlisted');
-CREATE TYPE content_status AS ENUM ('draft', 'processing', 'ready', 'published', 'failed');
+CREATE TYPE content_status AS ENUM ('draft', 'processing', 'ready', 'failed');
 CREATE TYPE file_role AS ENUM (
     'original',
     'thumbnail_small',
@@ -18,6 +18,8 @@ CREATE TABLE content (
     description TEXT,
     visibility content_visibility NOT NULL DEFAULT 'private',
     status content_status NOT NULL DEFAULT 'draft',
+    publish_requested_at TIMESTAMP,
+    published_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted BOOLEAN NOT NULL DEFAULT FALSE,

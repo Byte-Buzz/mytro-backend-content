@@ -76,7 +76,7 @@ func (r *contentRepository) GetOwnerById(ctx context.Context, id uuid.UUID) (uui
 func (r *contentRepository) GetAllNewByOwner(ctx context.Context, ownerId uuid.UUID) ([]models.Content, error) {
 	contentDTOs := []dto.ContentDTO{}
 
-	result := r.db.WithContext(ctx).Where("owner_id = ? AND status NOT IN ('draft', 'published') AND NOT deleted", ownerId.String()).Find(&contentDTOs)
+	result := r.db.WithContext(ctx).Where("owner_id = ? AND status <> 'draft' AND publish_requested_at IS NULL AND NOT deleted", ownerId.String()).Find(&contentDTOs)
 
 	if result.Error == gorm.ErrRecordNotFound {
 		return []models.Content{}, nil
@@ -120,19 +120,21 @@ func contentToDomain(dto *dto.ContentDTO) (*models.Content, error) {
 	}
 
 	return &models.Content{
-		ID:          id,
-		OwnerID:     ownerID,
-		Type:        models.ContentType(dto.Type),
-		Title:       dto.Title,
-		Description: dto.Description,
-		Visibility:  models.ContentVisibility(dto.Visibility),
-		Status:      models.ContentStatus(dto.Status),
-		CreatedAt:   dto.CreatedAt,
-		UpdatedAt:   dto.UpdatedAt,
-		Deleted:     dto.Deleted,
-		DeletedAt:   dto.DeletedAt,
-		Metadata:    metadataToDomain(dto.Metadata),
-		Files:       filesToDomain(dto.Files),
+		ID:                 id,
+		OwnerID:            ownerID,
+		Type:               models.ContentType(dto.Type),
+		Title:              dto.Title,
+		Description:        dto.Description,
+		Visibility:         models.ContentVisibility(dto.Visibility),
+		Status:             models.ContentStatus(dto.Status),
+		PublishRequestedAt: dto.PublishRequestedAt,
+		PublishedAt:        dto.PublishedAt,
+		CreatedAt:          dto.CreatedAt,
+		UpdatedAt:          dto.UpdatedAt,
+		Deleted:            dto.Deleted,
+		DeletedAt:          dto.DeletedAt,
+		Metadata:           metadataToDomain(dto.Metadata),
+		Files:              filesToDomain(dto.Files),
 	}, nil
 }
 
@@ -142,18 +144,20 @@ func contentToDTO(c *models.Content) *dto.ContentDTO {
 	}
 
 	return &dto.ContentDTO{
-		ID:          c.ID.String(),
-		OwnerID:     c.OwnerID.String(),
-		Type:        string(c.Type),
-		Title:       c.Title,
-		Description: c.Description,
-		Visibility:  string(c.Visibility),
-		Status:      string(c.Status),
-		CreatedAt:   c.CreatedAt,
-		UpdatedAt:   c.UpdatedAt,
-		Deleted:     c.Deleted,
-		DeletedAt:   c.DeletedAt,
-		Metadata:    metadataToDTO(c.Metadata),
-		Files:       filesToDTO(c.Files),
+		ID:                 c.ID.String(),
+		OwnerID:            c.OwnerID.String(),
+		Type:               string(c.Type),
+		Title:              c.Title,
+		Description:        c.Description,
+		Visibility:         string(c.Visibility),
+		Status:             string(c.Status),
+		PublishRequestedAt: c.PublishRequestedAt,
+		PublishedAt:        c.PublishedAt,
+		CreatedAt:          c.CreatedAt,
+		UpdatedAt:          c.UpdatedAt,
+		Deleted:            c.Deleted,
+		DeletedAt:          c.DeletedAt,
+		Metadata:           metadataToDTO(c.Metadata),
+		Files:              filesToDTO(c.Files),
 	}
 }
