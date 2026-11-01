@@ -9,7 +9,6 @@ import (
 	"mytro-backend-content/internal/infrastructure/config"
 	"mytro-backend-content/internal/infrastructure/grpc/pb"
 
-	"github.com/bytedance/gopkg/util/logger"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -70,7 +69,7 @@ func (app *App) GetPublicKey() (*rsa.PublicKey, error) {
 
 	publicKey, err := x509.ParsePKIXPublicKey(publicKeyBlock.Bytes)
 	if err != nil {
-		logger.Fatal("failed to parse public key: " + err.Error())
+		app.Logger.Fatal("failed to parse public key: " + err.Error())
 	}
 
 	return publicKey.(*rsa.PublicKey), nil
