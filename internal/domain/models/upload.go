@@ -16,3 +16,8 @@ type UploadURL struct {
 	UploadURL string
 	ExpiresAt uint64
 }
+
+type CreateUpload struct {
+	FileType string
+	OwnerID  uuid.UUID
+}

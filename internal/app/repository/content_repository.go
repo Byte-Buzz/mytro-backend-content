@@ -13,6 +13,7 @@ import (
 type ContentRepository interface {
 	FindByID(ctx context.Context, id uuid.UUID) (*models.Content, error)
 	GetOwnerById(ctx context.Context, id uuid.UUID) (uuid.UUID, error)
+	GetAllNewByOwner(ctx context.Context, id uuid.UUID) ([]models.Content, error)
 
 	Create(ctx context.Context, content *models.Content) error
 }
@@ -70,6 +71,33 @@ func (r *contentRepository) GetOwnerById(ctx context.Context, id uuid.UUID) (uui
 	}
 
 	return uuid.Parse(contentDTO.OwnerID)
+}
+
+func (r *contentRepository) GetAllNewByOwner(ctx context.Context, ownerId uuid.UUID) ([]models.Content, error) {
+	contentDTOs := []dto.ContentDTO{}
+
+	result := r.db.WithContext(ctx).Where("owner_id = ? AND status NOT IN ('draft', 'published') AND NOT deleted", ownerId.String()).Find(&contentDTOs)
+
+	if result.Error == gorm.ErrRecordNotFound {
+		return []models.Content{}, nil
+	}
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	contents := make([]models.Content, 0, len(contentDTOs))
+
+	for _, contentDTO := range contentDTOs {
+		content, err := contentToDomain(&contentDTO)
+		if err != nil {
+			return []models.Content{}, err
+		}
+
+		contents = append(contents, *content)
+	}
+
+	return contents, nil
 }
 
 func (r *contentRepository) Create(ctx context.Context, content *models.Content) error {

@@ -7,3 +7,7 @@ type ContentFileDTO struct {
 	Width     *int
 	Height    *int
 }
+
+func (ContentFileDTO) TableName() string {
+	return "content_files"
+}

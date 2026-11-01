@@ -5,3 +5,7 @@ type ContentMetadataDTO struct {
 	DurationSeconds *int
 	DominantColor   *string
 }
+
+func (ContentMetadataDTO) TableName() string {
+	return "content_metadata"
+}

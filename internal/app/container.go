@@ -20,8 +20,7 @@ type App struct {
 	GRPC   *pb.ContentStorageClient
 	DB     *gorm.DB
 
-	// TODO: implement transaction manager
-	// TxManager    *repository.TxManager
+	TxManager    repository.TxManager
 	Services     *AppServices
 	repositories *AppRepositories
 }
@@ -42,7 +41,7 @@ func NewApp(config *config.Config, db *gorm.DB, logger *zap.Logger, grpcClient *
 		GRPC:   grpcClient,
 		DB:     db,
 
-		// TxManager:    repository.NewTxManager(db),
+		TxManager:    repository.NewTxManager(db),
 		Services:     &AppServices{},
 		repositories: &AppRepositories{},
 	}
@@ -59,7 +58,7 @@ func (app *App) createRepositories() {
 }
 
 func (app *App) createServices() {
-	app.Services.ContentService = service.NewContentService(app.repositories.ContentRepository, app.repositories.FileRepository)
+	app.Services.ContentService = service.NewContentService(app.repositories.ContentRepository, app.repositories.FileRepository, app.TxManager)
 }
 
 func (app *App) GetPublicKey() (*rsa.PublicKey, error) {

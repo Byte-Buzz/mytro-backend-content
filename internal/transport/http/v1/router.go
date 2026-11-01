@@ -8,6 +8,7 @@ import (
 )
 
 func RegisterRoutes(router *gin.RouterGroup, app *app.App) {
-	router.POST("/upload", handler.CreateContentUploadHandler(app))
-	router.GET("/upload/:id", handler.GetContentUploadStatusHandler(app))
+	router.POST("/uploads", handler.CreateContentUploadHandler(app))
+	router.GET("/uploads", handler.GetContentUploadListHandler(app))
+	router.GET("/uploads/:id", handler.GetContentUploadStatusHandler(app))
 }

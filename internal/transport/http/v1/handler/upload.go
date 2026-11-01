@@ -2,7 +2,11 @@ package handler
 
 import (
 	"mytro-backend-content/internal/app"
+	"mytro-backend-content/internal/app/service"
+	"mytro-backend-content/internal/domain/models"
 	"mytro-backend-content/internal/transport/http/middleware"
+	"mytro-backend-content/internal/transport/http/v1/request"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -12,19 +16,9 @@ func CreateContentUploadHandler(app *app.App) gin.HandlerFunc {
 	services := app.Services
 
 	return func(c *gin.Context) {
-		url, err := services.ContentService.CreateUpload(c)
-		if err != nil {
-			c.JSON(500, gin.H{"status": "error", "message": err.Error()})
-			return
-		}
-		c.JSON(200, gin.H{"status": "ok", "url": url.UploadURL})
-	}
-}
+		var createRequest request.CreateContentRequest
 
-func ConfirmContentUploadHandler(app *app.App) gin.HandlerFunc {
-	services := app.Services
-	return func(c *gin.Context) {
-		contentID, err := uuid.Parse(c.Param("content_id"))
+		err := c.BindJSON(&createRequest)
 		if err != nil {
 			c.JSON(400, gin.H{"status": "error", "message": err.Error()})
 			return
@@ -33,29 +27,46 @@ func ConfirmContentUploadHandler(app *app.App) gin.HandlerFunc {
 		userId := middleware.AuthFromContext(c)
 		if userId == uuid.Nil {
 			c.JSON(401, gin.H{"status": "error", "message": "unauthorized"})
-		}
-
-		valid, err := services.ContentService.CheckContentOwner(c, contentID, userId)
-		if err != nil {
-			c.JSON(403, gin.H{"status": "error", "message": err.Error()})
 			return
 		}
 
-		if !valid {
-			c.JSON(403, gin.H{"status": "error", "message": "forbidden"})
+		url, err := services.ContentService.CreateUpload(c.Request.Context(), models.CreateUpload{
+			FileType: createRequest.ContentType,
+			OwnerID:  userId,
+		})
+		if err == service.ErrUnsupportedContentType {
+			c.JSON(http.StatusUnprocessableEntity, gin.H{"status": "error", "message": "unsupported file type"})
+			return
 		}
-
-		err = services.ContentService.CompleteUpload(c, contentID)
 		if err != nil {
 			c.JSON(500, gin.H{"status": "error", "message": err.Error()})
 			return
 		}
-
-		c.JSON(200, gin.H{"status": "ok"})
+		c.JSON(http.StatusCreated, gin.H{"status": "ok", "url": url.UploadURL})
 	}
 }
 
 func GetContentUploadStatusHandler(app *app.App) gin.HandlerFunc {
 	return func(c *gin.Context) {
+	}
+}
+
+func GetContentUploadListHandler(app *app.App) gin.HandlerFunc {
+	services := app.Services
+
+	return func(c *gin.Context) {
+		userId := middleware.AuthFromContext(c)
+		if userId == uuid.Nil {
+			c.JSON(401, gin.H{"status": "error", "message": "unauthorized"})
+			return
+		}
+
+		contentList, err := services.ContentService.GetNewContentList(c.Request.Context(), userId)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"status": "ok", "data": contentList})
 	}
 }

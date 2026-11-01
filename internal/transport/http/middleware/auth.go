@@ -30,7 +30,7 @@ func Auth(publicKey *rsa.PublicKey, logger *zap.Logger) gin.HandlerFunc {
 			if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
 				logger.Error(
 					"unexpected signing method",
-					zap.String("request_id", RequestIDFromContext(c)),
+					zap.String("request_id", RequestIDFromContext(c.Request.Context())),
 					zap.String("method", token.Header["alg"].(string)),
 				)
 				return nil, jwt.ErrTokenMalformed
@@ -41,7 +41,7 @@ func Auth(publicKey *rsa.PublicKey, logger *zap.Logger) gin.HandlerFunc {
 		if err != nil {
 			logger.Warn(
 				"invalid token",
-				zap.String("request_id", RequestIDFromContext(c)),
+				zap.String("request_id", RequestIDFromContext(c.Request.Context())),
 				zap.Error(err),
 			)
 			c.Next()
@@ -55,16 +55,18 @@ func Auth(publicKey *rsa.PublicKey, logger *zap.Logger) gin.HandlerFunc {
 
 		id, err := token.Claims.GetSubject()
 		if err != nil {
-			logger.Error("parse claims error", zap.Error(err), zap.String("request_id", RequestIDFromContext(c)))
+			logger.Error("parse claims error", zap.Error(err), zap.String("request_id", RequestIDFromContext(c.Request.Context())))
 			c.Next()
 			return
 		}
 
 		if err := uuid.Validate(id); err != nil {
-			logger.Error("invalid user id", zap.Error(err), zap.String("request_id", RequestIDFromContext(c)))
+			logger.Error("invalid user id", zap.Error(err), zap.String("request_id", RequestIDFromContext(c.Request.Context())))
 			c.Next()
 			return
 		}
+
+		logger.Info("auth provided", zap.String("request_id", RequestIDFromContext(c.Request.Context())), zap.String("user_id", id))
 
 		c.Request = c.Request.WithContext(context.WithValue(
 			c.Request.Context(),
@@ -76,8 +78,8 @@ func Auth(publicKey *rsa.PublicKey, logger *zap.Logger) gin.HandlerFunc {
 	}
 }
 
-func AuthFromContext(ctx context.Context) uuid.UUID {
-	id, ok := ctx.Value(authIDKey).(string)
+func AuthFromContext(ctx *gin.Context) uuid.UUID {
+	id, ok := ctx.Request.Context().Value(authIDKey).(string)
 
 	if !ok {
 		return uuid.Nil

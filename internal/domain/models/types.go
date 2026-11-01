@@ -16,6 +16,7 @@ const (
 	ContentStatusDraft      ContentStatus = "draft"
 	ContentStatusProcessing ContentStatus = "processing"
 	ContentStatusReady      ContentStatus = "ready"
+	ContentStatusPublished  ContentStatus = "published"
 	ContentStatusFailed     ContentStatus = "failed"
 
 	FileRoleOriginal        FileRole = "original"

@@ -14,6 +14,11 @@ type ContentDTO struct {
 	UpdatedAt   time.Time `gorm:"not null;default:current_timestamp"`
 	Deleted     bool      `gorm:"not null;default:false"`
 	DeletedAt   *time.Time
-	Metadata    *ContentMetadataDTO `gorm:"constraint:OnDelete:CASCADE"`
+	Metadata    *ContentMetadataDTO `gorm:"foreignKey:ContentID;constraint:OnDelete:CASCADE"`
 	Files       []ContentFileDTO    `gorm:"foreignKey:ContentID;references:ID;constraint:OnDelete:CASCADE"`
+}
+
+func (ContentDTO) TableName() string {
+	
+	return "content"
 }

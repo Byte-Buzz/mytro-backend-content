@@ -25,6 +25,9 @@ func RequestID() gin.HandlerFunc {
 }
 
 func RequestIDFromContext(ctx context.Context) string {
-	id := ctx.Value(requestIDKey).(string)
+	id, ok := ctx.Value(requestIDKey).(string)
+	if !ok {
+		return ""
+	}
 	return id
 }
