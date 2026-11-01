@@ -50,15 +50,18 @@ func (s ContentService) CreateUpload(ctx context.Context, content models.CreateU
 	}
 
 	filename := id.String() + extension
-	isVideo := slices.Contains(VideoContentTypes, extension)
+	isVideo := slices.Contains(VideoContentTypes, content.FileType)
 
-	s.contentRepository.Create(ctx, &models.Content{
+	err := s.contentRepository.Create(ctx, &models.Content{
 		ID:         id,
 		OwnerID:    content.OwnerID,
 		Type:       getFileType(isVideo),
 		Status:     models.ContentStatusDraft,
 		Visibility: models.ContentVisibilityPrivate,
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	return s.fileRepository.CreateUploadURL(ctx, models.UploadURLData{
 		ContentID:   id,
