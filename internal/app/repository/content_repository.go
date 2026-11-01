@@ -41,8 +41,8 @@ func (r *contentRepository) FindByID(ctx context.Context, id uuid.UUID) (*models
 	var content dto.ContentDTO
 
 	err := r.db.WithContext(ctx).
-		Preload("ContentMetadata").
-		Preload("ContentFiles").
+		Preload("Metadata").
+		Preload("Files").
 		Where("id = ?", id).
 		First(&content).Error
 
@@ -60,7 +60,7 @@ func (r *contentRepository) FindByID(ctx context.Context, id uuid.UUID) (*models
 func (r *contentRepository) GetOwnerById(ctx context.Context, id uuid.UUID) (uuid.UUID, error) {
 	var contentDTO dto.ContentDTO
 
-	result := r.db.WithContext(ctx).Select("owner_id").Where("id = ?", id.String()).Take(contentDTO)
+	result := r.db.WithContext(ctx).Select("owner_id").Where("id = ?", id.String()).Take(&contentDTO)
 
 	if result.Error == gorm.ErrRecordNotFound {
 		return uuid.Nil, nil
