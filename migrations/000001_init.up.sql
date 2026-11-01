@@ -1,7 +1,7 @@
 -- ENUMs
 CREATE TYPE content_type AS ENUM ('image', 'video');
 CREATE TYPE content_visibility AS ENUM ('public', 'private', 'unlisted');
-CREATE TYPE content_status AS ENUM ('draft', 'processing', 'ready', 'failed');
+CREATE TYPE content_status AS ENUM ('draft', 'processing', 'ready', 'published', 'failed');
 CREATE TYPE file_role AS ENUM (
     'original',
     'thumbnail_small',

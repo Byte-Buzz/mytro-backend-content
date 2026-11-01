@@ -2,8 +2,8 @@ package dto
 
 type ContentFileDTO struct {
 	ContentID string `gorm:"primaryKey;type:uuid;references:ID"`
-	FileID    string `gorm:"primaryKey;type:uuid"`
-	Role      string `gorm:"type:file_role;primaryKey"`
+	FileID    string `gorm:"type:uuid;not null"`
+	Role      string `gorm:"primaryKey;type:file_role"`
 	Width     *int
 	Height    *int
 }

@@ -3,7 +3,7 @@ package dto
 import "time"
 
 type ContentDTO struct {
-	ID          string    `gorm:"type:uuid;primaryKey"`
+	ID          string    `gorm:"primaryKey;type:uuid"`
 	OwnerID     string    `gorm:"type:uuid;not null"`
 	Type        string    `gorm:"type:content_type;not null"`
 	Title       *string   `gorm:"type:text"`
@@ -19,6 +19,5 @@ type ContentDTO struct {
 }
 
 func (ContentDTO) TableName() string {
-	
 	return "content"
 }
