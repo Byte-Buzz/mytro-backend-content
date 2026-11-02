@@ -47,6 +47,7 @@ func CreateContentUploadHandler(app *app.App) gin.HandlerFunc {
 		body := response.CreateUploadResponse{
 			ContentID: url.ContentID.String(),
 			UploadURL: url.UploadURL,
+			ExpiresAt: url.ExpiresAt,
 		}
 
 		c.JSON(http.StatusCreated, gin.H{"status": "ok", "data": body})

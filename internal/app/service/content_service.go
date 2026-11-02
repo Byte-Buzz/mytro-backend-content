@@ -75,14 +75,14 @@ func (s ContentService) CreateUpload(ctx context.Context, content models.CreateU
 		return nil, err
 	}
 
-	created_url := models.CreatedUpload{
+	createdURL := models.CreatedUpload{
 		ContentID: id,
 		FileID:    url.FileID,
 		UploadURL: url.UploadURL,
 		ExpiresAt: url.ExpiresAt,
 	}
 
-	return &created_url, err
+	return &createdURL, err
 }
 
 func (s ContentService) CheckContentOwner(ctx context.Context, contentID uuid.UUID, userID uuid.UUID) (bool, error) {

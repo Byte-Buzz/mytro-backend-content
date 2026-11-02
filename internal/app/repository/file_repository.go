@@ -65,7 +65,7 @@ func (r *fileRepository) CreateUploadURL(ctx context.Context, data models.Upload
 	return &models.UploadURL{
 		FileID:    response.FileId,
 		UploadURL: response.UploadUrl,
-		ExpiresAt: time.Unix(int64(response.UploadExpiresAt), 0),
+		ExpiresAt: time.Unix(int64(response.UploadExpiresAt), 0).UTC(),
 	}, nil
 }
 
