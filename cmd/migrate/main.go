@@ -4,7 +4,6 @@ import (
 	"flag"
 	"log"
 	"mytro-backend-tile/internal/infrastructure/config"
-	"mytro-backend-tile/internal/infrastructure/database"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -19,18 +18,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	db, err := database.NewPostgres(*cfg)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	sqlDB, err := db.DB()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer sqlDB.Close()
 
 	m, err := migrate.New(
 		"file://migrations",
