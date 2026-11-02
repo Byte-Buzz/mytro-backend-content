@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"mytro-backend-content/internal/domain/models"
 	"mytro-backend-content/internal/infrastructure/grpc/pb"
+	"time"
 )
 
 type FileRepository interface {
@@ -64,7 +65,7 @@ func (r *fileRepository) CreateUploadURL(ctx context.Context, data models.Upload
 	return &models.UploadURL{
 		FileID:    response.FileId,
 		UploadURL: response.UploadUrl,
-		ExpiresAt: response.UploadExpiresAt,
+		ExpiresAt: time.Unix(int64(response.UploadExpiresAt), 0),
 	}, nil
 }
 

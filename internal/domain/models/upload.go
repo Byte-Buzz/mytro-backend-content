@@ -1,6 +1,10 @@
 package models
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type UploadURLData struct {
 	ContentID   uuid.UUID
@@ -12,12 +16,20 @@ type UploadURLData struct {
 }
 
 type UploadURL struct {
+	ContentID uuid.UUID
 	FileID    string
 	UploadURL string
-	ExpiresAt uint64
+	ExpiresAt time.Time
 }
 
 type CreateUpload struct {
 	FileType string
 	OwnerID  uuid.UUID
+}
+
+type CreatedUpload struct {
+	ContentID uuid.UUID
+	FileID    string
+	UploadURL string
+	ExpiresAt time.Time
 }

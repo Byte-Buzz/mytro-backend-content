@@ -6,6 +6,7 @@ import (
 	"mytro-backend-content/internal/domain/models"
 	"mytro-backend-content/internal/transport/http/middleware"
 	"mytro-backend-content/internal/transport/http/v1/request"
+	"mytro-backend-content/internal/transport/http/v1/response"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,7 +17,7 @@ func CreateContentUploadHandler(app *app.App) gin.HandlerFunc {
 	services := app.Services
 
 	return func(c *gin.Context) {
-		var createRequest request.CreateContentRequest
+		var createRequest request.CreateUploadRequest
 
 		err := c.BindJSON(&createRequest)
 		if err != nil {
@@ -42,12 +43,19 @@ func CreateContentUploadHandler(app *app.App) gin.HandlerFunc {
 			c.JSON(500, gin.H{"status": "error", "message": err.Error()})
 			return
 		}
-		c.JSON(http.StatusCreated, gin.H{"status": "ok", "url": url.UploadURL})
+
+		body := response.CreateUploadResponse{
+			ContentID: url.ContentID.String(),
+			UploadURL: url.UploadURL,
+		}
+
+		c.JSON(http.StatusCreated, gin.H{"status": "ok", "data": body})
 	}
 }
 
 func GetContentUploadStatusHandler(app *app.App) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		c.JSON(http.StatusNotImplemented, gin.H{"status": "error", "message": "not implemented"})
 	}
 }
 

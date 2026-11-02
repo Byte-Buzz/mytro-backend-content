@@ -41,7 +41,7 @@ func NewContentService(contentRepository repository.ContentRepository, fileRepos
 	}
 }
 
-func (s ContentService) CreateUpload(ctx context.Context, content models.CreateUpload) (*models.UploadURL, error) {
+func (s ContentService) CreateUpload(ctx context.Context, content models.CreateUpload) (*models.CreatedUpload, error) {
 	id := uuid.New()
 
 	extension, exists := AvailableContentTypes[content.FileType]
@@ -63,7 +63,7 @@ func (s ContentService) CreateUpload(ctx context.Context, content models.CreateU
 		return nil, err
 	}
 
-	return s.fileRepository.CreateUploadURL(ctx, models.UploadURLData{
+	url, err := s.fileRepository.CreateUploadURL(ctx, models.UploadURLData{
 		ContentID:   id,
 		Filename:    filename,
 		MaxSize:     getMaxFile(isVideo),
@@ -71,6 +71,18 @@ func (s ContentService) CreateUpload(ctx context.Context, content models.CreateU
 		ContentType: content.FileType,
 		Visibility:  models.ContentVisibilityPrivate,
 	})
+	if err != nil {
+		return nil, err
+	}
+
+	created_url := models.CreatedUpload{
+		ContentID: id,
+		FileID:    url.FileID,
+		UploadURL: url.UploadURL,
+		ExpiresAt: url.ExpiresAt,
+	}
+
+	return &created_url, err
 }
 
 func (s ContentService) CheckContentOwner(ctx context.Context, contentId uuid.UUID, userID uuid.UUID) (bool, error) {

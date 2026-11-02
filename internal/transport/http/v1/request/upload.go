@@ -1,5 +1,5 @@
 package request
 
-type CreateContentRequest struct {
+type CreateUploadRequest struct {
 	ContentType string `json:"content_type" binding:"required"`
 }
