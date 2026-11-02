@@ -12,7 +12,7 @@ import (
 
 type ContentRepository interface {
 	FindByID(ctx context.Context, id uuid.UUID) (*models.Content, error)
-	GetOwnerById(ctx context.Context, id uuid.UUID) (uuid.UUID, error)
+	GetOwnerByID(ctx context.Context, id uuid.UUID) (uuid.UUID, error)
 	GetAllNewByOwner(ctx context.Context, id uuid.UUID) ([]models.Content, error)
 
 	Create(ctx context.Context, content *models.Content) error
@@ -57,7 +57,7 @@ func (r *contentRepository) FindByID(ctx context.Context, id uuid.UUID) (*models
 	return contentToDomain(&content)
 }
 
-func (r *contentRepository) GetOwnerById(ctx context.Context, id uuid.UUID) (uuid.UUID, error) {
+func (r *contentRepository) GetOwnerByID(ctx context.Context, id uuid.UUID) (uuid.UUID, error) {
 	var contentDTO dto.ContentDTO
 
 	result := r.db.WithContext(ctx).Select("owner_id").Where("id = ?", id.String()).Take(&contentDTO)
@@ -73,10 +73,10 @@ func (r *contentRepository) GetOwnerById(ctx context.Context, id uuid.UUID) (uui
 	return uuid.Parse(contentDTO.OwnerID)
 }
 
-func (r *contentRepository) GetAllNewByOwner(ctx context.Context, ownerId uuid.UUID) ([]models.Content, error) {
+func (r *contentRepository) GetAllNewByOwner(ctx context.Context, ownerID uuid.UUID) ([]models.Content, error) {
 	contentDTOs := []dto.ContentDTO{}
 
-	result := r.db.WithContext(ctx).Where("owner_id = ? AND status <> 'draft' AND publish_requested_at IS NULL AND NOT deleted", ownerId.String()).Find(&contentDTOs)
+	result := r.db.WithContext(ctx).Where("owner_id = ? AND status <> 'draft' AND publish_requested_at IS NULL AND NOT deleted", ownerID.String()).Find(&contentDTOs)
 
 	if result.Error == gorm.ErrRecordNotFound {
 		return []models.Content{}, nil

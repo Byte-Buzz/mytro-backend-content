@@ -85,14 +85,14 @@ func (s ContentService) CreateUpload(ctx context.Context, content models.CreateU
 	return &created_url, err
 }
 
-func (s ContentService) CheckContentOwner(ctx context.Context, contentId uuid.UUID, userID uuid.UUID) (bool, error) {
-	ownerID, err := s.contentRepository.GetOwnerById(ctx, contentId)
+func (s ContentService) CheckContentOwner(ctx context.Context, contentID uuid.UUID, userID uuid.UUID) (bool, error) {
+	ownerID, err := s.contentRepository.GetOwnerByID(ctx, contentID)
 
 	return ownerID == userID, err
 }
 
-func (s ContentService) GetNewContentList(ctx context.Context, userId uuid.UUID) ([]models.Content, error) {
-	contentList, err := s.contentRepository.GetAllNewByOwner(ctx, userId)
+func (s ContentService) GetNewContentList(ctx context.Context, userID uuid.UUID) ([]models.Content, error) {
+	contentList, err := s.contentRepository.GetAllNewByOwner(ctx, userID)
 	if err != nil {
 		return nil, err
 	}

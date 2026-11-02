@@ -16,7 +16,6 @@ type UploadURLData struct {
 }
 
 type UploadURL struct {
-	ContentID uuid.UUID
 	FileID    string
 	UploadURL string
 	ExpiresAt time.Time

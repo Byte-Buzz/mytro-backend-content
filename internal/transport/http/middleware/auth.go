@@ -85,11 +85,11 @@ func AuthFromContext(ctx *gin.Context) uuid.UUID {
 		return uuid.Nil
 	}
 
-	userId, err := uuid.Parse(id)
+	userID, err := uuid.Parse(id)
 
 	if err != nil {
 		return uuid.Nil
 	}
 
-	return userId
+	return userID
 }

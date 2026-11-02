@@ -25,15 +25,15 @@ func CreateContentUploadHandler(app *app.App) gin.HandlerFunc {
 			return
 		}
 
-		userId := middleware.AuthFromContext(c)
-		if userId == uuid.Nil {
+		userID := middleware.AuthFromContext(c)
+		if userID == uuid.Nil {
 			c.JSON(401, gin.H{"status": "error", "message": "unauthorized"})
 			return
 		}
 
 		url, err := services.ContentService.CreateUpload(c.Request.Context(), models.CreateUpload{
 			FileType: createRequest.ContentType,
-			OwnerID:  userId,
+			OwnerID:  userID,
 		})
 		if err == service.ErrUnsupportedContentType {
 			c.JSON(http.StatusUnprocessableEntity, gin.H{"status": "error", "message": "unsupported file type"})
@@ -63,13 +63,13 @@ func GetContentUploadListHandler(app *app.App) gin.HandlerFunc {
 	services := app.Services
 
 	return func(c *gin.Context) {
-		userId := middleware.AuthFromContext(c)
-		if userId == uuid.Nil {
+		userID := middleware.AuthFromContext(c)
+		if userID == uuid.Nil {
 			c.JSON(401, gin.H{"status": "error", "message": "unauthorized"})
 			return
 		}
 
-		contentList, err := services.ContentService.GetNewContentList(c.Request.Context(), userId)
+		contentList, err := services.ContentService.GetNewContentList(c.Request.Context(), userID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
 			return
