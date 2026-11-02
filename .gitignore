@@ -64,9 +64,7 @@ profile.out
 *.profile
 
 # Docker and containers
-Dockerfile*
 docker-compose.yml
-.dockerignore
 
 # Local config / secrets
 config/local.yaml
