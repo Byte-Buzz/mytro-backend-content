@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"mytro-backend-content/internal/infrastructure/config"
+	"slices"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -9,14 +10,15 @@ import (
 
 // CORS applies CORS middleware to the Gin router.
 func CORS(cors config.CORSConfig) gin.HandlerFunc {
+	// This function returns a Gin handler function that processes incoming HTTP requests and sets CORS headers based on the provided configuration.
 	return func(c *gin.Context) {
 		origin := c.Request.Header.Get("Origin")
 
 		// Determine if the origin is allowed
 		var allowedOrigin string
-		if contains(cors.AllowedOrigins, "*") {
+		if slices.Contains(cors.AllowedOrigins, "*") {
 			allowedOrigin = "*"
-		} else if origin != "" && contains(cors.AllowedOrigins, origin) {
+		} else if origin != "" && slices.Contains(cors.AllowedOrigins, origin) {
 			allowedOrigin = origin
 		}
 
@@ -36,7 +38,7 @@ func CORS(cors config.CORSConfig) gin.HandlerFunc {
 			c.Header("Access-Control-Allow-Credentials", "true")
 		}
 
-		//
+		// Handle preflight requests
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(204) // No Content
 			return
@@ -44,14 +46,4 @@ func CORS(cors config.CORSConfig) gin.HandlerFunc {
 
 		c.Next()
 	}
-}
-
-// contains checks if a slice contains a specific string.
-func contains(slice []string, item string) bool {
-	for _, s := range slice {
-		if s == item {
-			return true
-		}
-	}
-	return false
 }

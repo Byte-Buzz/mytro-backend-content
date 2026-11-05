@@ -18,6 +18,8 @@ CREATE TABLE content (
     description TEXT,
     visibility content_visibility NOT NULL DEFAULT 'private',
     status content_status NOT NULL DEFAULT 'draft',
+    publish_requested_at TIMESTAMP,
+    published_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted BOOLEAN NOT NULL DEFAULT FALSE,
