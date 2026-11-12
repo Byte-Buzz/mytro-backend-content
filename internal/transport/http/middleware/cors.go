@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"mytro-backend-content/internal/infrastructure/config"
+	"mytro-backend-tile/internal/infrastructure/config"
 	"slices"
 	"strings"
 

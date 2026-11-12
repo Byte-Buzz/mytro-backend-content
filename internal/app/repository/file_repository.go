@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 	"encoding/json"
-	"mytro-backend-content/internal/domain/models"
-	"mytro-backend-content/internal/infrastructure/grpc/pb"
+	"mytro-backend-tile/internal/domain/models"
+	"mytro-backend-tile/internal/infrastructure/grpc/pb"
 	"time"
 )
 

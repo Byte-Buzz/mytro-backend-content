@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"log"
-	"mytro-backend-content/internal/infrastructure/config"
-	"mytro-backend-content/internal/infrastructure/database"
+	"mytro-backend-tile/internal/infrastructure/config"
+	"mytro-backend-tile/internal/infrastructure/database"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"

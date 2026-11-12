@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"mytro-backend-content/internal/domain/models"
-	"mytro-backend-content/internal/infrastructure/database/dto"
+	"mytro-backend-tile/internal/domain/models"
+	"mytro-backend-tile/internal/infrastructure/database/dto"
 
 	"github.com/google/uuid"
 )

@@ -1,7 +1,7 @@
 package http
 
 import (
-	"mytro-backend-content/internal/app"
+	"mytro-backend-tile/internal/app"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"

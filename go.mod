@@ -1,4 +1,4 @@
-module mytro-backend-content
+module mytro-backend-tile
 
 go 1.26.0
 

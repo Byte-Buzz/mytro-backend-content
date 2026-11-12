@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"mytro-backend-content/internal/app"
-	"mytro-backend-content/internal/app/service"
-	"mytro-backend-content/internal/domain/models"
-	"mytro-backend-content/internal/transport/http/middleware"
-	"mytro-backend-content/internal/transport/http/v1/request"
-	"mytro-backend-content/internal/transport/http/v1/response"
+	"mytro-backend-tile/internal/app"
+	"mytro-backend-tile/internal/app/service"
+	"mytro-backend-tile/internal/domain/models"
+	"mytro-backend-tile/internal/transport/http/middleware"
+	"mytro-backend-tile/internal/transport/http/v1/request"
+	"mytro-backend-tile/internal/transport/http/v1/response"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

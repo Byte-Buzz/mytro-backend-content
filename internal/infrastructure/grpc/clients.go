@@ -1,7 +1,7 @@
 package grpc
 
 import (
-	"mytro-backend-content/internal/infrastructure/grpc/pb"
+	"mytro-backend-tile/internal/infrastructure/grpc/pb"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

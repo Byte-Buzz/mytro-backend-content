@@ -1,9 +1,9 @@
 package http
 
 import (
-	"mytro-backend-content/internal/app"
-	"mytro-backend-content/internal/transport/http/middleware"
-	v1 "mytro-backend-content/internal/transport/http/v1"
+	"mytro-backend-tile/internal/app"
+	"mytro-backend-tile/internal/transport/http/middleware"
+	v1 "mytro-backend-tile/internal/transport/http/v1"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"

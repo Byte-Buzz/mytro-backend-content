@@ -1,8 +1,8 @@
 package v1
 
 import (
-	"mytro-backend-content/internal/app"
-	"mytro-backend-content/internal/transport/http/v1/handler"
+	"mytro-backend-tile/internal/app"
+	"mytro-backend-tile/internal/transport/http/v1/handler"
 
 	"github.com/gin-gonic/gin"
 )

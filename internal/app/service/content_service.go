@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 	"errors"
-	"mytro-backend-content/internal/app/repository"
-	"mytro-backend-content/internal/domain/models"
+	"mytro-backend-tile/internal/app/repository"
+	"mytro-backend-tile/internal/domain/models"
 	"slices"
 
 	"github.com/google/uuid"
