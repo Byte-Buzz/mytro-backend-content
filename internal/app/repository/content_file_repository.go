@@ -7,14 +7,14 @@ import (
 	"github.com/google/uuid"
 )
 
-func filesToDomain(dtos []dto.ContentFileDTO) []models.ContentFile {
+func filesToDomain(dtos []dto.TileFileDTO) []models.ContentFile {
 	if len(dtos) == 0 {
 		return []models.ContentFile{}
 	}
 
 	files := make([]models.ContentFile, 0, len(dtos))
 	for _, f := range dtos {
-		contentID, err := uuid.Parse(f.ContentID)
+		contentID, err := uuid.Parse(f.TileID)
 		if err != nil {
 			continue
 		}
@@ -36,19 +36,19 @@ func filesToDomain(dtos []dto.ContentFileDTO) []models.ContentFile {
 	return files
 }
 
-func filesToDTO(files []models.ContentFile) []dto.ContentFileDTO {
+func filesToDTO(files []models.ContentFile) []dto.TileFileDTO {
 	if len(files) == 0 {
-		return []dto.ContentFileDTO{}
+		return []dto.TileFileDTO{}
 	}
 
-	result := make([]dto.ContentFileDTO, 0, len(files))
+	result := make([]dto.TileFileDTO, 0, len(files))
 	for _, f := range files {
-		result = append(result, dto.ContentFileDTO{
-			ContentID: f.ContentID.String(),
-			FileID:    f.FileID.String(),
-			Role:      string(f.Role),
-			Width:     f.Width,
-			Height:    f.Height,
+		result = append(result, dto.TileFileDTO{
+			TileID: f.ContentID.String(),
+			FileID: f.FileID.String(),
+			Role:   string(f.Role),
+			Width:  f.Width,
+			Height: f.Height,
 		})
 	}
 

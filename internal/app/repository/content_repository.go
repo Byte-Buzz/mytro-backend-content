@@ -38,7 +38,7 @@ func NewContentRepository(logger *zap.Logger, db *gorm.DB) ContentRepository {
 }
 
 func (r *contentRepository) FindByID(ctx context.Context, id uuid.UUID) (*models.Content, error) {
-	var content dto.ContentDTO
+	var content dto.TileDTO
 
 	err := r.db.WithContext(ctx).
 		Preload("Metadata").
@@ -58,7 +58,7 @@ func (r *contentRepository) FindByID(ctx context.Context, id uuid.UUID) (*models
 }
 
 func (r *contentRepository) GetOwnerByID(ctx context.Context, id uuid.UUID) (uuid.UUID, error) {
-	var contentDTO dto.ContentDTO
+	var contentDTO dto.TileDTO
 
 	result := r.db.WithContext(ctx).Select("owner_id").Where("id = ?", id.String()).Take(&contentDTO)
 
@@ -74,7 +74,7 @@ func (r *contentRepository) GetOwnerByID(ctx context.Context, id uuid.UUID) (uui
 }
 
 func (r *contentRepository) GetAllNewByOwner(ctx context.Context, ownerID uuid.UUID) ([]models.Content, error) {
-	contentDTOs := []dto.ContentDTO{}
+	contentDTOs := []dto.TileDTO{}
 
 	result := r.db.WithContext(ctx).Where("owner_id = ? AND status <> 'draft' AND publish_requested_at IS NULL AND NOT deleted", ownerID.String()).Find(&contentDTOs)
 
@@ -104,7 +104,7 @@ func (r *contentRepository) Create(ctx context.Context, content *models.Content)
 	return r.db.WithContext(ctx).Create(contentToDTO(content)).Error
 }
 
-func contentToDomain(dto *dto.ContentDTO) (*models.Content, error) {
+func contentToDomain(dto *dto.TileDTO) (*models.Content, error) {
 	if dto == nil {
 		return nil, nil
 	}
@@ -138,12 +138,12 @@ func contentToDomain(dto *dto.ContentDTO) (*models.Content, error) {
 	}, nil
 }
 
-func contentToDTO(c *models.Content) *dto.ContentDTO {
+func contentToDTO(c *models.Content) *dto.TileDTO {
 	if c == nil {
 		return nil
 	}
 
-	return &dto.ContentDTO{
+	return &dto.TileDTO{
 		ID:                 c.ID.String(),
 		OwnerID:            c.OwnerID.String(),
 		Type:               string(c.Type),
