@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-const envPrefix = "MT_CONTENT_"
+const envPrefix = "MT_TILE_"
 
 // getEnv returns the value of the environment variable with the given key.
 // If the variable does not exist, or its value is empty, the defaultValue is returned.
