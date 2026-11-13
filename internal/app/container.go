@@ -25,12 +25,12 @@ type App struct {
 }
 
 type AppServices struct {
-	ContentService service.ContentService
+	TileService service.TileService
 }
 
 type AppRepositories struct {
-	ContentRepository repository.ContentRepository
-	FileRepository    repository.FileRepository
+	TileRepository repository.TileRepository
+	FileRepository repository.FileRepository
 }
 
 func NewApp(config *config.Config, db *gorm.DB, logger *zap.Logger, grpcClient *pb.ContentStorageClient) *App {
@@ -52,12 +52,12 @@ func NewApp(config *config.Config, db *gorm.DB, logger *zap.Logger, grpcClient *
 }
 
 func (app *App) createRepositories() {
-	app.repositories.ContentRepository = repository.NewContentRepository(app.Logger, app.DB)
+	app.repositories.TileRepository = repository.NewTileRepository(app.Logger, app.DB)
 	app.repositories.FileRepository = repository.NewFileRepository(*app.GRPC)
 }
 
 func (app *App) createServices() {
-	app.Services.ContentService = service.NewContentService(app.repositories.ContentRepository, app.repositories.FileRepository, app.TxManager)
+	app.Services.TileService = service.NewTileService(app.repositories.TileRepository, app.repositories.FileRepository, app.TxManager)
 }
 
 func (app *App) GetPublicKey() (*rsa.PublicKey, error) {

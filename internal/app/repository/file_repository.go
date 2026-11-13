@@ -28,7 +28,7 @@ func (r *fileRepository) CreateUploadURL(ctx context.Context, data models.Upload
 	ttl := uint32(60 * 60)
 
 	info := map[string]any{
-		"content_id":    data.ContentID.String(),
+		"tile_id":       data.TileID.String(),
 		"preview_sizes": []int{480},
 	}
 
@@ -69,9 +69,9 @@ func (r *fileRepository) CreateUploadURL(ctx context.Context, data models.Upload
 	}, nil
 }
 
-func getVisibility(visibility models.ContentVisibility) pb.FileVisibility {
+func getVisibility(visibility models.TileVisibility) pb.FileVisibility {
 	switch visibility {
-	case models.ContentVisibilityPublic:
+	case models.TileVisibilityPublic:
 		return pb.FileVisibility_PUBLIC
 	default:
 		return pb.FileVisibility_PRIVATE

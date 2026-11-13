@@ -10,41 +10,41 @@ import (
 	"gorm.io/gorm"
 )
 
-type ContentRepository interface {
-	FindByID(ctx context.Context, id uuid.UUID) (*models.Content, error)
+type TileRepository interface {
+	FindByID(ctx context.Context, id uuid.UUID) (*models.Tile, error)
 	GetOwnerByID(ctx context.Context, id uuid.UUID) (uuid.UUID, error)
-	GetAllNewByOwner(ctx context.Context, id uuid.UUID) ([]models.Content, error)
+	GetAllNewByOwner(ctx context.Context, id uuid.UUID) ([]models.Tile, error)
 
-	Create(ctx context.Context, content *models.Content) error
+	Create(ctx context.Context, tile *models.Tile) error
 }
 
-type contentRepository struct {
+type tileRepository struct {
 	logger *zap.Logger
 	db     *gorm.DB
 }
 
-// NewContentRepository creates a new ContentRepository instance.
+// NewTileRepository creates a new TileRepository instance.
 //
 // The logger parameter is used to log messages from the repository.
 // The db parameter is used to interact with the database.
 //
-// The returned ContentRepository instance is safe for use by multiple
+// The returned TileRepository instance is safe for use by multiple
 // goroutines.
-func NewContentRepository(logger *zap.Logger, db *gorm.DB) ContentRepository {
-	return &contentRepository{
+func NewTileRepository(logger *zap.Logger, db *gorm.DB) TileRepository {
+	return &tileRepository{
 		logger: logger,
 		db:     db,
 	}
 }
 
-func (r *contentRepository) FindByID(ctx context.Context, id uuid.UUID) (*models.Content, error) {
-	var content dto.TileDTO
+func (r *tileRepository) FindByID(ctx context.Context, id uuid.UUID) (*models.Tile, error) {
+	var tile dto.TileDTO
 
 	err := r.db.WithContext(ctx).
 		Preload("Metadata").
 		Preload("Files").
 		Where("id = ?", id).
-		First(&content).Error
+		First(&tile).Error
 
 	if err == gorm.ErrRecordNotFound {
 		return nil, nil
@@ -54,13 +54,13 @@ func (r *contentRepository) FindByID(ctx context.Context, id uuid.UUID) (*models
 		return nil, err
 	}
 
-	return contentToDomain(&content)
+	return tileToDomain(&tile)
 }
 
-func (r *contentRepository) GetOwnerByID(ctx context.Context, id uuid.UUID) (uuid.UUID, error) {
-	var contentDTO dto.TileDTO
+func (r *tileRepository) GetOwnerByID(ctx context.Context, id uuid.UUID) (uuid.UUID, error) {
+	var tileDTO dto.TileDTO
 
-	result := r.db.WithContext(ctx).Select("owner_id").Where("id = ?", id.String()).Take(&contentDTO)
+	result := r.db.WithContext(ctx).Select("owner_id").Where("id = ?", id.String()).Take(&tileDTO)
 
 	if result.Error == gorm.ErrRecordNotFound {
 		return uuid.Nil, nil
@@ -70,41 +70,41 @@ func (r *contentRepository) GetOwnerByID(ctx context.Context, id uuid.UUID) (uui
 		return uuid.Nil, result.Error
 	}
 
-	return uuid.Parse(contentDTO.OwnerID)
+	return uuid.Parse(tileDTO.OwnerID)
 }
 
-func (r *contentRepository) GetAllNewByOwner(ctx context.Context, ownerID uuid.UUID) ([]models.Content, error) {
-	contentDTOs := []dto.TileDTO{}
+func (r *tileRepository) GetAllNewByOwner(ctx context.Context, ownerID uuid.UUID) ([]models.Tile, error) {
+	tileDTOs := []dto.TileDTO{}
 
-	result := r.db.WithContext(ctx).Where("owner_id = ? AND status <> 'draft' AND publish_requested_at IS NULL AND NOT deleted", ownerID.String()).Find(&contentDTOs)
+	result := r.db.WithContext(ctx).Where("owner_id = ? AND status <> 'draft' AND publish_requested_at IS NULL AND NOT deleted", ownerID.String()).Find(&tileDTOs)
 
 	if result.Error == gorm.ErrRecordNotFound {
-		return []models.Content{}, nil
+		return []models.Tile{}, nil
 	}
 
 	if result.Error != nil {
 		return nil, result.Error
 	}
 
-	contents := make([]models.Content, 0, len(contentDTOs))
+	tiles := make([]models.Tile, 0, len(tileDTOs))
 
-	for _, contentDTO := range contentDTOs {
-		content, err := contentToDomain(&contentDTO)
+	for _, tileDTO := range tileDTOs {
+		tile, err := tileToDomain(&tileDTO)
 		if err != nil {
-			return []models.Content{}, err
+			return []models.Tile{}, err
 		}
 
-		contents = append(contents, *content)
+		tiles = append(tiles, *tile)
 	}
 
-	return contents, nil
+	return tiles, nil
 }
 
-func (r *contentRepository) Create(ctx context.Context, content *models.Content) error {
-	return r.db.WithContext(ctx).Create(contentToDTO(content)).Error
+func (r *tileRepository) Create(ctx context.Context, tile *models.Tile) error {
+	return r.db.WithContext(ctx).Create(tileToDTO(tile)).Error
 }
 
-func contentToDomain(dto *dto.TileDTO) (*models.Content, error) {
+func tileToDomain(dto *dto.TileDTO) (*models.Tile, error) {
 	if dto == nil {
 		return nil, nil
 	}
@@ -119,14 +119,14 @@ func contentToDomain(dto *dto.TileDTO) (*models.Content, error) {
 		return nil, err
 	}
 
-	return &models.Content{
+	return &models.Tile{
 		ID:                 id,
 		OwnerID:            ownerID,
-		Type:               models.ContentType(dto.Type),
+		Type:               models.TileType(dto.Type),
 		Title:              dto.Title,
 		Description:        dto.Description,
-		Visibility:         models.ContentVisibility(dto.Visibility),
-		Status:             models.ContentStatus(dto.Status),
+		Visibility:         models.TileVisibility(dto.Visibility),
+		Status:             models.TileStatus(dto.Status),
 		PublishRequestedAt: dto.PublishRequestedAt,
 		PublishedAt:        dto.PublishedAt,
 		CreatedAt:          dto.CreatedAt,
@@ -138,7 +138,7 @@ func contentToDomain(dto *dto.TileDTO) (*models.Content, error) {
 	}, nil
 }
 
-func contentToDTO(c *models.Content) *dto.TileDTO {
+func tileToDTO(c *models.Tile) *dto.TileDTO {
 	if c == nil {
 		return nil
 	}

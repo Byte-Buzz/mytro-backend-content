@@ -1,22 +1,22 @@
 package models
 
-type ContentType string
-type ContentVisibility string
-type ContentStatus string
+type TileType string
+type TileVisibility string
+type TileStatus string
 type FileRole string
 
 const (
-	ContentTypeImage ContentType = "image"
-	ContentTypeVideo ContentType = "video"
+	TileTypeImage TileType = "image"
+	TileTypeVideo TileType = "video"
 
-	ContentVisibilityPublic   ContentVisibility = "public"
-	ContentVisibilityPrivate  ContentVisibility = "private"
-	ContentVisibilityUnlisted ContentVisibility = "unlisted"
+	TileVisibilityPublic   TileVisibility = "public"
+	TileVisibilityPrivate  TileVisibility = "private"
+	TileVisibilityUnlisted TileVisibility = "unlisted"
 
-	ContentStatusDraft      ContentStatus = "draft"
-	ContentStatusProcessing ContentStatus = "processing"
-	ContentStatusReady      ContentStatus = "ready"
-	ContentStatusFailed     ContentStatus = "failed"
+	TileStatusDraft      TileStatus = "draft"
+	TileStatusProcessing TileStatus = "processing"
+	TileStatusReady      TileStatus = "ready"
+	TileStatusFailed     TileStatus = "failed"
 
 	FileRoleOriginal        FileRole = "original"
 	FileRoleThumbnailSmall  FileRole = "thumbnail_small"

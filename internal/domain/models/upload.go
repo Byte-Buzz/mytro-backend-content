@@ -7,11 +7,11 @@ import (
 )
 
 type UploadURLData struct {
-	ContentID   uuid.UUID
+	TileID      uuid.UUID
 	Filename    string
 	MaxSize     uint32
 	ContentType string
-	Visibility  ContentVisibility
+	Visibility  TileVisibility
 	IsVideo     bool
 }
 
@@ -27,7 +27,7 @@ type CreateUpload struct {
 }
 
 type CreatedUpload struct {
-	ContentID uuid.UUID
+	TileID    uuid.UUID
 	FileID    string
 	UploadURL string
 	ExpiresAt time.Time

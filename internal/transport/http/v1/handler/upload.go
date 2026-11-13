@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func CreateContentUploadHandler(app *app.App) gin.HandlerFunc {
+func CreateUploadHandler(app *app.App) gin.HandlerFunc {
 	services := app.Services
 
 	return func(c *gin.Context) {
@@ -31,7 +31,7 @@ func CreateContentUploadHandler(app *app.App) gin.HandlerFunc {
 			return
 		}
 
-		url, err := services.ContentService.CreateUpload(c.Request.Context(), models.CreateUpload{
+		url, err := services.TileService.CreateUpload(c.Request.Context(), models.CreateUpload{
 			FileType: createRequest.ContentType,
 			OwnerID:  userID,
 		})
@@ -45,7 +45,7 @@ func CreateContentUploadHandler(app *app.App) gin.HandlerFunc {
 		}
 
 		body := response.CreateUploadResponse{
-			ContentID: url.ContentID.String(),
+			TileID:    url.TileID.String(),
 			UploadURL: url.UploadURL,
 			ExpiresAt: url.ExpiresAt,
 		}
@@ -54,13 +54,13 @@ func CreateContentUploadHandler(app *app.App) gin.HandlerFunc {
 	}
 }
 
-func GetContentUploadStatusHandler(app *app.App) gin.HandlerFunc {
+func GetUploadStatusHandler(app *app.App) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.JSON(http.StatusNotImplemented, gin.H{"status": "error", "message": "not implemented"})
 	}
 }
 
-func GetContentUploadListHandler(app *app.App) gin.HandlerFunc {
+func GetUploadListHandler(app *app.App) gin.HandlerFunc {
 	services := app.Services
 
 	return func(c *gin.Context) {
@@ -70,12 +70,12 @@ func GetContentUploadListHandler(app *app.App) gin.HandlerFunc {
 			return
 		}
 
-		contentList, err := services.ContentService.GetNewContentList(c.Request.Context(), userID)
+		tiles, err := services.TileService.GetNewTiles(c.Request.Context(), userID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"status": "ok", "data": contentList})
+		c.JSON(http.StatusOK, gin.H{"status": "ok", "data": tiles})
 	}
 }

@@ -6,20 +6,20 @@ import (
 	"github.com/google/uuid"
 )
 
-type Content struct {
+type Tile struct {
 	ID                 uuid.UUID
 	OwnerID            uuid.UUID
-	Type               ContentType
+	Type               TileType
 	Title              *string
 	Description        *string
-	Visibility         ContentVisibility
-	Status             ContentStatus
+	Visibility         TileVisibility
+	Status             TileStatus
 	PublishRequestedAt *time.Time
 	PublishedAt        *time.Time
 	CreatedAt          time.Time
 	UpdatedAt          time.Time
 	Deleted            bool
 	DeletedAt          *time.Time
-	Metadata           *ContentMetadata
-	Files              []ContentFile
+	Metadata           *TileMetadata
+	Files              []TileFile
 }

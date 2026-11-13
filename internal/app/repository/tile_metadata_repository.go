@@ -7,30 +7,30 @@ import (
 	"github.com/google/uuid"
 )
 
-func metadataToDomain(dto *dto.TileMetadataDTO) *models.ContentMetadata {
+func metadataToDomain(dto *dto.TileMetadataDTO) *models.TileMetadata {
 	if dto == nil {
 		return nil
 	}
 
-	contentID, err := uuid.Parse(dto.TileID)
+	tileID, err := uuid.Parse(dto.TileID)
 	if err != nil {
 		return nil
 	}
 
-	return &models.ContentMetadata{
-		ContentID:       contentID,
+	return &models.TileMetadata{
+		TileID:          tileID,
 		DurationSeconds: dto.DurationSeconds,
 		DominantColor:   dto.DominantColor,
 	}
 }
 
-func metadataToDTO(m *models.ContentMetadata) *dto.TileMetadataDTO {
+func metadataToDTO(m *models.TileMetadata) *dto.TileMetadataDTO {
 	if m == nil {
 		return nil
 	}
 
 	return &dto.TileMetadataDTO{
-		TileID:          m.ContentID.String(),
+		TileID:          m.TileID.String(),
 		DurationSeconds: m.DurationSeconds,
 		DominantColor:   m.DominantColor,
 	}
