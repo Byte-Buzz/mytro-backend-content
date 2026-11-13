@@ -1,7 +1,13 @@
 package app
 
 import (
-	"mytro-backend-content/internal/infrastructure/config"
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
+	"mytro-backend-tile/internal/app/repository"
+	"mytro-backend-tile/internal/app/service"
+	"mytro-backend-tile/internal/infrastructure/config"
+	"mytro-backend-tile/internal/infrastructure/grpc/pb"
 
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -10,24 +16,31 @@ import (
 type App struct {
 	Config *config.Config
 	Logger *zap.Logger
+	GRPC   *pb.ContentStorageClient
 	DB     *gorm.DB
 
+	TxManager    repository.TxManager
 	Services     *AppServices
 	repositories *AppRepositories
 }
 
 type AppServices struct {
+	TileService service.TileService
 }
 
 type AppRepositories struct {
+	TileRepository repository.TileRepository
+	FileRepository repository.FileRepository
 }
 
-func NewApp(config *config.Config, db *gorm.DB, logger *zap.Logger) *App {
+func NewApp(config *config.Config, db *gorm.DB, logger *zap.Logger, grpcClient *pb.ContentStorageClient) *App {
 	app := &App{
 		Config: config,
 		Logger: logger,
+		GRPC:   grpcClient,
 		DB:     db,
 
+		TxManager:    repository.NewTxManager(db),
 		Services:     &AppServices{},
 		repositories: &AppRepositories{},
 	}
@@ -39,7 +52,25 @@ func NewApp(config *config.Config, db *gorm.DB, logger *zap.Logger) *App {
 }
 
 func (app *App) createRepositories() {
+	app.repositories.TileRepository = repository.NewTileRepository(app.Logger, app.DB)
+	app.repositories.FileRepository = repository.NewFileRepository(*app.GRPC)
 }
 
 func (app *App) createServices() {
+	app.Services.TileService = service.NewTileService(app.repositories.TileRepository, app.repositories.FileRepository, app.TxManager)
+}
+
+func (app *App) GetPublicKey() (*rsa.PublicKey, error) {
+	publicKeyBlock, _ := pem.Decode(([]byte)(app.Config.Keys.PublicKey()))
+
+	if publicKeyBlock == nil {
+		app.Logger.Fatal("failed to parse PEM block containing the key")
+	}
+
+	publicKey, err := x509.ParsePKIXPublicKey(publicKeyBlock.Bytes)
+	if err != nil {
+		app.Logger.Fatal("failed to parse public key: " + err.Error())
+	}
+
+	return publicKey.(*rsa.PublicKey), nil
 }

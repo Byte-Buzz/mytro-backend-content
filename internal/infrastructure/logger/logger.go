@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"mytro-backend-content/internal/infrastructure/config"
+	"mytro-backend-tile/internal/infrastructure/config"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"

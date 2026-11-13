@@ -1,7 +1,7 @@
 package database
 
 import (
-	"mytro-backend-content/internal/infrastructure/config"
+	"mytro-backend-tile/internal/infrastructure/config"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

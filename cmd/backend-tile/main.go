@@ -2,11 +2,12 @@ package main
 
 import (
 	"context"
-	"mytro-backend-content/internal/app"
-	"mytro-backend-content/internal/infrastructure/config"
-	"mytro-backend-content/internal/infrastructure/database"
-	"mytro-backend-content/internal/infrastructure/logger"
-	httpTransport "mytro-backend-content/internal/transport/http"
+	"mytro-backend-tile/internal/app"
+	"mytro-backend-tile/internal/infrastructure/config"
+	"mytro-backend-tile/internal/infrastructure/database"
+	"mytro-backend-tile/internal/infrastructure/grpc"
+	"mytro-backend-tile/internal/infrastructure/logger"
+	httpTransport "mytro-backend-tile/internal/transport/http"
 	"syscall"
 	"time"
 
@@ -41,8 +42,15 @@ func main() {
 		panic(err)
 	}
 
+	// Create a new gRPC client based on the configuration
+	grpcClient, err := grpc.NewContextClient(config.GRPC.ContentStorageAddress)
+	if err != nil {
+		// If there is an error creating the gRPC client, panic with the error
+		panic(err)
+	}
+
 	// Create a new application instance with the configuration, database, and logger
-	app := app.NewApp(config, db, logger)
+	app := app.NewApp(config, db, logger, &grpcClient)
 
 	// Create a new HTTP router
 	router := httpTransport.NewRouter(app)

@@ -1,15 +1,15 @@
 -- indexes
-DROP INDEX idx_content_deleted;
-DROP INDEX idx_content_status;
-DROP INDEX idx_content_owner_id;
+DROP INDEX idx_tiles_deleted;
+DROP INDEX idx_tiles_status;
+DROP INDEX idx_tiles_owner_id;
 
 -- tables
-DROP TABLE content_files;
-DROP TABLE content_metadata;
-DROP TABLE content;
+DROP TABLE tile_files;
+DROP TABLE tile_metadata;
+DROP TABLE tiles;
 
 -- ENUMs
 DROP TYPE file_role;
-DROP TYPE content_status;
-DROP TYPE content_visibility;
-DROP TYPE content_type;
+DROP TYPE tile_status;
+DROP TYPE tile_visibility;
+DROP TYPE tile_type;
