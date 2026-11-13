@@ -30,7 +30,7 @@ func NewRouter(app *app.App) *gin.Engine {
 	// Register health check endpoint
 	registerHealth(router, app)
 
-	baseGroup := router.Group("/api/content")
+	baseGroup := router.Group("/api/tile")
 
 	// Register API v1 routes
 	v1Group := baseGroup.Group("/v1")
