@@ -36,8 +36,5 @@ func NewRouter(app *app.App) *gin.Engine {
 	v1Group := baseGroup.Group("/v1")
 	v1.RegisterRoutes(v1Group, app)
 
-	// Register base API routes
-	v1.RegisterRoutes(baseGroup, app)
-
 	return router
 }
